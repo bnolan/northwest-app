@@ -33,7 +33,7 @@ Storage.prototype.getUser = function (user) {
 };
 
 Storage.prototype.register = function (user) {
-  return this.postJSON(config.registerURL, { user: user })
+  return this.unauthenticatedRequest('POST', config.registerURL, { user: user })
     .then((response) => response.text())
     .then((responseText) => {
       var json = JSON.parse(responseText);
@@ -49,12 +49,20 @@ Storage.prototype.register = function (user) {
 };
 
 Storage.prototype.createPurchase = function (purchase) {
-  return this.postAuthenticatedJSON(config.createPurchaseURL, { purchase: purchase });
+  return this.authenticatedRequest('POST', config.createPurchaseURL, { purchase: purchase });
 };
 
-Storage.prototype.postAuthenticatedJSON = function (url, data) {
+Storage.prototype.likePurchase = function (purchase) {
+  return this.authenticatedRequest('POST', config.likePurchaseURL(purchase.id));
+};
+
+Storage.prototype.unlikePurchase = function (purchase) {
+  return this.authenticatedRequest('DELETE', config.unlikePurchaseURL(purchase.id));
+};
+
+Storage.prototype.authenticatedRequest = function (method, url, data) {
   return fetch(url, {
-    method: 'post',
+    method: method,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -64,9 +72,9 @@ Storage.prototype.postAuthenticatedJSON = function (url, data) {
   });
 };
 
-Storage.prototype.postJSON = function (url, data) {
+Storage.prototype.unauthenticatedRequest = function (method, url, data) {
   return fetch(url, {
-    method: 'post',
+    method: method,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'

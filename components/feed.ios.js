@@ -44,8 +44,10 @@ var Feed = React.createClass({
 
     if (this.userLikesPurchase(p)) {
       p.likes = p.likes.filter((n) => n !== username);
+      Storage.unlikePurchase(p);
     } else {
       p.likes.push(username);
+      Storage.likePurchase(p);
     }
 
     this.setState({ purchases: this.state.purchases });
@@ -87,7 +89,7 @@ var Feed = React.createClass({
                 { timeago(Date.parse(p.created_at)).replace(/about /, '') }
               </Text>
               <Text style={styles.likes}>
-                { p.likes.length } likes
+                { p.likes.length } { p.likes.length === 1 ? 'like' : 'likes' }
               </Text>
               { image }
             </View>
