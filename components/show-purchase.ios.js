@@ -19,20 +19,42 @@ var {
 module.exports = React.createClass({
   getInitialState: function () {
     return {
-      loading: false
+      loading: true
     };
+  },
+
+  componentDidMount: function () {
+    fetch(config.purchaseURL(this.props.purchase.id))
+      .then((response) => response.text())
+      .then((responseText) => {
+        var json = JSON.parse(responseText);
+
+        this.setState({
+          purchase: json,
+          loading: false
+        });
+      }).done();
   },
 
   render: function () {
     if (this.state.loading) {
       return (<ActivityIndicatorIOS style={{marginTop: 100}} />);
     } else {
-      var p = this.props.purchase;
+      var p = this.state.purchase;
       var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
 
       var likes = p.likes.map(function (like) {
         return (
-          <Text>{ like }</Text>
+          <View style={styles.like}>
+              <Image
+                style={styles.miniavatar}
+                source={{uri: like.user.avatar}}
+              />
+
+              <Text style={styles.likeUsername}>
+                { like.user.username }
+              </Text>
+          </View>
         );
       });
 
@@ -66,7 +88,9 @@ module.exports = React.createClass({
 
             </View>
 
-            <Text>Liked by</Text>
+            <View style={styles.subheader}>
+              <Text>Liked by</Text>
+            </View>
 
             { likes }
           </View>
@@ -81,6 +105,30 @@ var styles = StyleSheet.create({
     marginRight: 4,
     fontWeight: 'bold',
     color: '#333'
+  },
+  subheader: {
+    backgroundColor: '#eee',
+    padding: 10,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    marginBottom: 10
+  },
+  like: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 4
+  },
+  miniavatar: {
+    width: 32,
+    height: 32,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 16,
+    borderColor: '#ccc',
+    borderWidth: 1
+  },
+  likeUsername: {
+    padding: 6
   },
   likeButton: {
     margin: 2,
@@ -156,8 +204,5 @@ var styles = StyleSheet.create({
   container: {
     marginTop: 0,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
 });
