@@ -43,6 +43,22 @@ Storage.prototype.getUser = function (user) {
   return this.user;
 };
 
+Storage.prototype.login = function (user) {
+  return this.unauthenticatedRequest('POST', config.loginURL, { user: user })
+    .then((response) => response.text())
+    .then((responseText) => {
+      var json = JSON.parse(responseText);
+
+      if (json.error) {
+        return json.error;
+      } else {
+        this.setAccessToken(json.access_token);
+        this.setUser(user);
+        return false;
+      }
+    });
+};
+
 Storage.prototype.register = function (user) {
   return this.unauthenticatedRequest('POST', config.registerURL, { user: user })
     .then((response) => response.text())

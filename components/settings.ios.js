@@ -17,6 +17,7 @@ var Settings = React.createClass({
       email: '',
       username: '',
       password: '',
+      mode: 'register',
       loggedIn: Storage.isLoggedIn()
     };
   },
@@ -26,7 +27,13 @@ var Settings = React.createClass({
   },
 
   fetchData: function () {
-    this.setState(Storage.user);
+    if (Storage.isLoggedIn()) {
+      this.setState({
+        email: Storage.user.email,
+        username: Storage.user.username,
+        password: Storage.user.password
+      });
+    }
   },
 
   onUsernameChange: function (event) {
@@ -43,8 +50,6 @@ var Settings = React.createClass({
 
   onLogout: function () {
     Storage.logout();
-    
-    // supergross
 
     this.setState({
       email: '',
@@ -65,6 +70,17 @@ var Settings = React.createClass({
     });
   },
 
+  onLogin: function () {
+    Storage.login(this.state).then((err) => {
+      if (!err) {
+        alert('You are logged in');
+        this.setState({loggedIn: true });
+      } else {
+        alert('Unable to log in:\n' + err);
+      }
+    });
+  },
+
   render: function () {
     if (this.state.loggedIn) {
       return (
@@ -79,23 +95,40 @@ var Settings = React.createClass({
         </View>
       );
     } else {
+      var email;
+
+      if (this.state.mode === 'register') {
+        email = (
+          <View>
+            <Text>Your email:</Text>
+            <TextInput keyboardType='email-address' onChange={this.onEmailChange} value={this.state.email} style={styles.textinput} />
+          </View>
+        );
+      }
+
       return (
         <View style={styles.settingsView}>
           <View>
-            <Text>Login</Text>
-            <Text>Register</Text>
+            <TouchableHighlight onPress={ () => this.setState({mode: 'login'}) } style={ [styles.tabButton, this.state.mode === 'login' ? styles.active : styles.inactive] }>
+              <Text>Login</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={ () => this.setState({mode: 'register'}) } style={ [styles.tabButton, this.state.mode === 'register' ? styles.active : styles.inactive] }>
+              <Text>Register</Text>
+            </TouchableHighlight>
           </View>
 
           <Text>Your username:</Text>
           <TextInput onChange={this.onUsernameChange} value={this.state.username} style={styles.textinput} />
-          <Text>Your email:</Text>
-          <TextInput keyboardType='email-address' onChange={this.onEmailChange} value={this.state.email} style={styles.textinput} />
+
+          { email }
+
           <Text>Your password:</Text>
           <TextInput onChange={this.onPasswordChange} value={this.state.password} style={styles.textinput} password={true} />
 
-          <TouchableHighlight onPress={this.onRegister}>
+          <TouchableHighlight onPress={ this.state.mode === 'login' ? this.onLogin : this.onRegister }>
             <View style={styles.button}>
-              <Text>Register</Text>
+              <Text>{ this.state.mode }</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -109,10 +142,19 @@ var styles = StyleSheet.create({
     marginTop: 30,
     padding: 30
   },
+  tabButton: {
+    borderRadius: 10,
+    backgroundColor: '#ccc',
+    padding: 10,
+    marginTop: 10,
+    width: 80
+  },
+  active: {
+    backgroundColor: '#f0a',
+  },
   button: {
     borderRadius: 10,
     backgroundColor: '#ccc',
-    color: 'black',
     padding: 10,
     marginTop: 10,
   },

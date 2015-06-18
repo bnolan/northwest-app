@@ -7,9 +7,6 @@ var {
   AppRegistry,
   StyleSheet,
   NavigatorIOS,
-  ActivityIndicatorIOS,
-  Text,
-  View,
   TabBarIOS
 } = React;
 
@@ -36,21 +33,21 @@ var northwest = React.createClass({
     var self = this;
 
     return (
-     <TabBarIOS>
-      <TabBarIOS.Item title='Feed' onPress={self.onFeed} selected={this.state.selection === 'Feed'}>
-        <NavigatorIOS
-          ref='nav'
-          style={styles.wrapper}
-          onPress={self.onFeed}
-          initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
-      </TabBarIOS.Item>
-      <TabBarIOS.Item title='Post' onPress={self.onPost} selected={this.state.selection === 'Post'}>
-        <NewPost />
-      </TabBarIOS.Item>
-      <TabBarIOS.Item title='Settings' onPress={self.onSettings} selected={this.state.selection === 'Settings'}>
-        <Settings />
-      </TabBarIOS.Item>
-    </TabBarIOS>
+       <TabBarIOS>
+        <TabBarIOS.Item title='Feed' onPress={self.onFeed} selected={this.state.selection === 'Feed'}>
+          <NavigatorIOS
+            ref='nav'
+            style={styles.wrapper}
+            onPress={self.onFeed}
+            initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item title='Post' onPress={self.onPost} selected={this.state.selection === 'Post'}>
+          <NewPost />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item title='Settings' onPress={self.onSettings} selected={this.state.selection === 'Settings'}>
+          <Settings />
+        </TabBarIOS.Item>
+      </TabBarIOS>
     );
   }
 });

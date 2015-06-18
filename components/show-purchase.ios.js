@@ -3,58 +3,42 @@
 var React = require('react-native');
 var timeago = require('timeago');
 var config = require('../config');
+var Storage = require('./storage');
 var LikeButton = require('./like-button.js');
-var ShowPurchase = require('./show-purchase.ios.js');
 
 var {
   StyleSheet,
   Text,
   Image,
-  TouchableHighlight,
   ActivityIndicatorIOS,
   View,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } = React;
 
-var Feed = React.createClass({
+module.exports = React.createClass({
   getInitialState: function () {
     return {
-      loading: true
+      loading: false
     };
-  },
-
-  componentDidMount: function () {
-    this.fetchData();
-  },
-
-  fetchData: function () {
-    fetch(config.feedURL)
-      .then((response) => response.text())
-      .then((responseText) => {
-        var json = JSON.parse(responseText);
-
-        this.setState({
-          purchases: json.purchases,
-          loading: false
-        });
-      }).done();
-  },
-
-  onShowProduct: function (p) {
-    this.props.navigator.push({
-      component: ShowPurchase, title: 'View Purchase', passProps: { purchase: p }
-    });
   },
 
   render: function () {
     if (this.state.loading) {
       return (<ActivityIndicatorIOS style={{marginTop: 100}} />);
     } else {
-      var purchases = this.state.purchases.map((p) => {
-        var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
+      var p = this.props.purchase;
+      var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
 
+      var likes = p.likes.map(function (like) {
         return (
-          <TouchableHighlight underlayColor='#ccc' onPress={this.onShowProduct.bind(this, p)}>
+          <Text>{ like }</Text>
+        );
+      });
+
+      return (
+        <ScrollView style={styles.scroll}>
+          <View style={styles.container}>
             <View style={styles.purchase}>
               <Image
                 style={styles.avatar}
@@ -64,7 +48,7 @@ var Feed = React.createClass({
                 <Text style={styles.description}>
                   <Text style={{fontWeight: 'bold' }}>{ p.name }</Text>
                   &nbsp;by&nbsp;
-                  <Text style={{fontWeight: 'bold' }}>{ p.user.username }</Text>
+                  <Text style={{fontWeight: 'bold' }}>{ p.user.username }</Text> 
                 </Text>
                 <Text style={styles.address}>
                   <Text style={{color: '#333'}}>{ p.venue.name }</Text>, { p.venue.address }
@@ -79,15 +63,12 @@ var Feed = React.createClass({
               </View>
 
               <LikeButton purchase={p} />
-            </View>
-          </TouchableHighlight>
-        );
-      });
 
-      return (
-        <ScrollView style={styles.scroll}>
-          <View style={styles.container}>
-            { purchases}
+            </View>
+
+            <Text>Liked by</Text>
+
+            { likes }
           </View>
         </ScrollView>
       );
@@ -100,6 +81,22 @@ var styles = StyleSheet.create({
     marginRight: 4,
     fontWeight: 'bold',
     color: '#333'
+  },
+  likeButton: {
+    margin: 2,
+    borderRadius: 2
+  },
+  liked: {
+    fontSize: 28,
+    color: '#f09',
+    marginTop: 10,
+    marginLeft: 22
+  },
+  unliked: {
+    fontSize: 28,
+    color: '#777',
+    marginTop: 10,
+    marginLeft: 22
   },
   product: {
     marginLeft: 4,
@@ -163,16 +160,4 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
 });
-
-module.exports = Feed;
