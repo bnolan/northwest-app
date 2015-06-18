@@ -1,6 +1,8 @@
 var React = require('react-native');
 var Feed = require('./components/feed.ios.js');
 var NewPost = require('./components/new-post.ios.js');
+var Settings = require('./components/settings.ios.js');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -46,10 +48,7 @@ var northwest = React.createClass({
         <NewPost />
       </TabBarIOS.Item>
       <TabBarIOS.Item title='Settings' onPress={self.onSettings} selected={this.state.selection === 'Settings'}>
-        <View>
-          <ActivityIndicatorIOS />
-          <Text>Settings yo</Text>
-        </View>
+        <Settings />
       </TabBarIOS.Item>
     </TabBarIOS>
     );

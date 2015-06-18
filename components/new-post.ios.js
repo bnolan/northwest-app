@@ -1,6 +1,7 @@
-/* globals fetch, alert, XMLHttpRequest */
+/* globals fetch, XMLHttpRequest, alert */
 
 var React = require('react-native');
+var storage = require('./storage');
 
 var {
   StyleSheet,
@@ -16,16 +17,7 @@ var Feed = React.createClass({
   getInitialState: function () {
     return {
       loading: true,
-
       venues: []
-
-      // purchase: {
-      //   name: 'Lamborghini Murcielago', 
-      //   created_at: '2015-06-16T17:47:43+12:00', 
-      //   user: { name: 'captainbenis' }, 
-      //   photo: 'murcielago.png', 
-      //   store: {}
-      // }
     };
   },
 
@@ -63,10 +55,17 @@ var Feed = React.createClass({
   },
 
   onSave: function () {
-    var x = new XMLHttpRequest();
-    x.open('POST', 'http://localhost:3000/v1/purchases');
-    x.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-    x.send(JSON.stringify({ purchase: this.state.purchase }));
+    storage.createPurchase(this.state.purchase)
+      .then((response) => response.text())
+      .then((responseText) => {
+        var json = JSON.parse(responseText);
+
+        if (json.error) {
+          alert('Could not save: \n' + json.error);
+        } else {
+          alert('Yay it saved');
+        }
+      });
   },
 
   render: function () {
@@ -131,7 +130,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     margin: 4,
     flex: 1,
-    padding: 6,
+    padding: 6
   },
   saveButton: {
     padding: 10,

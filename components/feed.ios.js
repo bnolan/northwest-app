@@ -3,6 +3,7 @@
 var React = require('react-native');
 var timeago = require('timeago');
 var config = require('../config');
+var Storage = require('./storage');
 
 var {
   StyleSheet,
@@ -10,7 +11,8 @@ var {
   Image,
   ActivityIndicatorIOS,
   View,
-  ScrollView
+  ScrollView,
+  TouchableHighlight
 } = React;
 
 var Feed = React.createClass({
@@ -28,49 +30,66 @@ var Feed = React.createClass({
     fetch(config.feedURL)
       .then((response) => response.text())
       .then((responseText) => {
-        var json = JSON.parse(responseText).purchases;
+        var json = JSON.parse(responseText);
 
         this.setState({
-          purchases: json,
+          purchases: json.purchases,
           loading: false
         });
       });
+  },
+
+  onLike: function (p) {
+    var username = Storage.user.username;
+
+    if (this.userLikesPurchase(p)) {
+      p.likes = p.likes.filter((n) => n !== username);
+    } else {
+      p.likes.push(username);
+    }
+
+    this.setState({ purchases: this.state.purchases });
+  },
+
+  userLikesPurchase: function (p) {
+    return p.likes.find((n) => n === Storage.user.username);
   },
 
   render: function () {
     if (this.state.loading) {
       return (<ActivityIndicatorIOS style={{marginTop: 100}} />);
     } else {
-      var purchases = this.state.purchases.map(function (p) {
+      var purchases = this.state.purchases.map((p) => {
+        var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
+        var liked = this.userLikesPurchase(p);
+
         return (
           <View style={styles.purchase}>
             <View style={styles.icons}>
               <Image
                 style={styles.avatar}
-                source={{uri: 'http://localhost:3000/fixtures/' + p.user.name + '.jpg?' }}
+                source={{uri: p.user.avatar}}
               />
-              <Text style={styles.like}>
-                &#9825;
-              </Text>
+              <TouchableHighlight style={styles.likeButton} underlayColor='#ccc' onPress={this.onLike.bind(this, p)}>
+                <Text style={liked ? styles.liked : styles.unliked}>
+                  { liked ? '♡' : '♡' }
+                </Text>
+              </TouchableHighlight>
             </View>
             <View style={styles.details}>
               <Text style={styles.description}>
-                { p.user.name } bought a { p.name } from { p.venue.name }
+                { p.user.username } bought a { p.name } from { p.venue.name }
               </Text>
-
               <Text style={styles.address}>
                 { p.venue.address }
               </Text>
               <Text style={styles.meta}>
-                { timeago(p.created_at).replace(/about /, '') }
+                { timeago(Date.parse(p.created_at)).replace(/about /, '') }
               </Text>
               <Text style={styles.likes}>
                 { p.likes.length } likes
               </Text>
-              <Image
-                style={styles.productImage}
-                source={{uri: 'http://localhost:3000/fixtures/' + p.photo }}
-              />
+              { image }
             </View>
           </View>
         );
@@ -93,9 +112,19 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333'
   },
-  like: {
+  likeButton: {
+    margin: 2,
+    borderRadius: 2
+  },
+  liked: {
     fontSize: 28,
-    color: '#555',
+    color: '#f09',
+    marginTop: 10,
+    marginLeft: 22
+  },
+  unliked: {
+    fontSize: 28,
+    color: '#777',
     marginTop: 10,
     marginLeft: 22
   },
