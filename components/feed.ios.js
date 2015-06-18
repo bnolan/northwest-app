@@ -12,7 +12,7 @@ var {
   ActivityIndicatorIOS,
   View,
   ScrollView,
-  TouchableHighlight
+  TouchableOpacity
 } = React;
 
 var Feed = React.createClass({
@@ -67,23 +67,18 @@ var Feed = React.createClass({
 
         return (
           <View style={styles.purchase}>
-            <View style={styles.icons}>
-              <Image
-                style={styles.avatar}
-                source={{uri: p.user.avatar}}
-              />
-              <TouchableHighlight style={styles.likeButton} underlayColor='#ccc' onPress={this.onLike.bind(this, p)}>
-                <Text style={liked ? styles.liked : styles.unliked}>
-                  { liked ? '♡' : '♡' }
-                </Text>
-              </TouchableHighlight>
-            </View>
+            <Image
+              style={styles.avatar}
+              source={{uri: p.user.avatar}}
+            />
             <View style={styles.details}>
               <Text style={styles.description}>
-                { p.user.username } bought a { p.name } from { p.venue.name }
+                <Text style={{fontWeight: 'bold' }}>{ p.name }</Text>
+                &nbsp;by&nbsp;
+                <Text style={{fontWeight: 'bold' }}>{ p.user.username }</Text> 
               </Text>
               <Text style={styles.address}>
-                { p.venue.address }
+                <Text style={{color: '#333'}}>{ p.venue.name }</Text>, { p.venue.address }
               </Text>
               <Text style={styles.meta}>
                 { timeago(Date.parse(p.created_at)).replace(/about /, '') }
@@ -93,6 +88,11 @@ var Feed = React.createClass({
               </Text>
               { image }
             </View>
+            <TouchableOpacity style={styles.likeButton} activeOpacity={0.2} onPress={this.onLike.bind(this, p)}>
+              <Text style={liked ? styles.liked : styles.unliked}>
+                { liked ? '♡' : '♡' }
+              </Text>
+            </TouchableOpacity>
           </View>
         );
       });
@@ -150,7 +150,7 @@ var styles = StyleSheet.create({
   },
   details: {
     flexDirection: 'column',
-    width: 320
+    width: 240
   },
   avatar: {
     width: 48,

@@ -16,7 +16,8 @@ var Settings = React.createClass({
     return {
       email: '',
       username: '',
-      password: ''
+      password: '',
+      loggedIn: Storage.isLoggedIn()
     };
   },
 
@@ -40,15 +41,24 @@ var Settings = React.createClass({
     this.setState({ password: event.nativeEvent.text });
   },
 
-  register: function () {
-    if (this.state.username === '') {
-      alert('Not valid yo');
-      return;
-    }
+  onLogout: function () {
+    Storage.logout();
+    
+    // supergross
 
+    this.setState({
+      email: '',
+      username: '',
+      password: '',
+      loggedIn: false
+    });
+  },
+
+  onRegister: function () {
     Storage.register(this.state).then((err) => {
       if (!err) {
         alert('You are registered');
+        this.setState({loggedIn: true });
       } else {
         alert('Unable to register:\n' + err);
       }
@@ -56,39 +66,55 @@ var Settings = React.createClass({
   },
 
   render: function () {
-    return (
-      <View style={styles.settingsView}>
-        <View>
-          <Text>Login</Text>
-          <Text>Register</Text>
+    if (this.state.loggedIn) {
+      return (
+        <View style={styles.settingsView}>
+          <Text>Your username is {this.state.username}</Text>
+
+          <TouchableHighlight onPress={this.onLogout}>
+            <View style={styles.button}>
+              <Text>Logout</Text>
+            </View>
+          </TouchableHighlight>
         </View>
-
-        <Text>Your username:</Text>
-        <TextInput onChange={this.onUsernameChange} value={this.state.username} style={styles.textinput} />
-        <Text>Your email:</Text>
-        <TextInput keyboardType='email-address' onChange={this.onEmailChange} value={this.state.email} style={styles.textinput} />
-        <Text>Your password:</Text>
-        <TextInput onChange={this.onPasswordChange} value={this.state.password} style={styles.textinput} password={true} />
-
-        <TouchableHighlight onPress={this.register}>
-          <View style={styles.button}>
+      );
+    } else {
+      return (
+        <View style={styles.settingsView}>
+          <View>
+            <Text>Login</Text>
             <Text>Register</Text>
           </View>
-        </TouchableHighlight>
-      </View>
-    );
+
+          <Text>Your username:</Text>
+          <TextInput onChange={this.onUsernameChange} value={this.state.username} style={styles.textinput} />
+          <Text>Your email:</Text>
+          <TextInput keyboardType='email-address' onChange={this.onEmailChange} value={this.state.email} style={styles.textinput} />
+          <Text>Your password:</Text>
+          <TextInput onChange={this.onPasswordChange} value={this.state.password} style={styles.textinput} password={true} />
+
+          <TouchableHighlight onPress={this.onRegister}>
+            <View style={styles.button}>
+              <Text>Register</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+      );
+    }
   }
 });
 
 var styles = StyleSheet.create({
   settingsView: {
-    marginTop: 100
+    marginTop: 30,
+    padding: 30
   },
   button: {
     borderRadius: 10,
-    backgroundColor: '#f0a',
+    backgroundColor: '#ccc',
     color: 'black',
-    padding: 10
+    padding: 10,
+    marginTop: 10,
   },
   result: {
     padding: 10,

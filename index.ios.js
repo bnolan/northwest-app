@@ -42,7 +42,7 @@ var northwest = React.createClass({
           ref='nav'
           style={styles.wrapper}
           onPress={self.onFeed}
-          initialRoute={{ component: Feed, title: 'Feed' }} />
+          initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
       </TabBarIOS.Item>
       <TabBarIOS.Item title='Post' onPress={self.onPost} selected={this.state.selection === 'Post'}>
         <NewPost />

@@ -23,6 +23,17 @@ Storage.prototype.setAccessToken = function (key) {
   this.accessToken = key;
 };
 
+Storage.prototype.isLoggedIn = function () {
+  return this.accessToken !== null;
+};
+
+Storage.prototype.logout = function () {
+  AsyncStorage.multiRemove([USERKEY, ACCESSTOKENKEY]).then(() => {
+    this.accessToken = null;
+    this.user = null;
+  });
+};
+
 Storage.prototype.setUser = function (user) {
   AsyncStorage.setItem(USERKEY, JSON.stringify(user));
   this.user = user;
