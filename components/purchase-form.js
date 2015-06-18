@@ -4,6 +4,7 @@ var React = require('react-native');
 var storage = require('./storage');
 var config = require('../config');
 var PurchaseForm = require('./purchase-form');
+var Camera = require('react-native-camera');
 
 var {
   StyleSheet,
@@ -20,6 +21,7 @@ module.exports = React.createClass({
 
   getInitialState: function () {
     return {
+      cameraType: Camera.constants.Type.back,
       purchase: {
         venue: this.props.venue,
         user: storage.getUser()
@@ -35,6 +37,12 @@ module.exports = React.createClass({
   },
 
   onSave: function () {
+    this.refs.cam.capture(function(err, data) {
+      console.log(err, data);
+    });
+
+    return;
+
     storage.createPurchase(this.state.purchase)
       .then((response) => response.text())
       .then((responseText) => {
@@ -65,6 +73,12 @@ module.exports = React.createClass({
 
           <TextInput placeholder='Product name' onChangeText={this.onNameChange} style={styles.purchaseName} />
 
+          <Camera
+            ref='cam'
+            style={styles.camera}
+            onBarCodeRead={this._onBarCodeRead}
+            type={this.state.cameraType} />
+
           <TouchableHighlight underlayColor='#ccc' onPress={this.onSave}>
             <View style={styles.saveButton}>
               <Text style={styles.buttonText}>Save Purchase</Text>
@@ -77,6 +91,10 @@ module.exports = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  camera: {
+    width: 160,
+    height: 160
+  },
   container: {
     padding: 20
   },
