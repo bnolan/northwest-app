@@ -30,21 +30,18 @@ var northwest = React.createClass({
   },
 
   render: function () {
-    var self = this;
-
     return (
        <TabBarIOS>
-        <TabBarIOS.Item title='Feed' onPress={self.onFeed} selected={this.state.selection === 'Feed'}>
+        <TabBarIOS.Item title='Feed' onPress={this.onFeed} selected={this.state.selection === 'Feed'}>
           <NavigatorIOS
             ref='nav'
             style={styles.wrapper}
-            onPress={self.onFeed}
             initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
         </TabBarIOS.Item>
-        <TabBarIOS.Item title='Post' onPress={self.onPost} selected={this.state.selection === 'Post'}>
+        <TabBarIOS.Item title='New Purchase' onPress={this.onPost} selected={this.state.selection === 'Post'}>
           <NewPurchase />
         </TabBarIOS.Item>
-        <TabBarIOS.Item title='Settings' onPress={self.onSettings} selected={this.state.selection === 'Settings'}>
+        <TabBarIOS.Item title='Settings' onPress={this.onSettings} selected={this.state.selection === 'Settings'}>
           <Settings />
         </TabBarIOS.Item>
       </TabBarIOS>
