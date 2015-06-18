@@ -70,7 +70,7 @@ module.exports = React.createClass({
                 <Text style={styles.description}>
                   <Text style={{fontWeight: 'bold' }}>{ p.name }</Text>
                   &nbsp;by&nbsp;
-                  <Text style={{fontWeight: 'bold' }}>{ p.user.username }</Text> 
+                  <Text style={{fontWeight: 'bold' }}>{ p.user.username }</Text>
                 </Text>
                 <Text style={styles.address}>
                   <Text style={{color: '#333'}}>{ p.venue.name }</Text>, { p.venue.address }

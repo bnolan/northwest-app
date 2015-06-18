@@ -1,6 +1,6 @@
 var React = require('react-native');
 var Feed = require('./components/feed.ios.js');
-var NewPost = require('./components/new-post.ios.js');
+var NewPurchase = require('./components/new-purchase.js');
 var Settings = require('./components/settings.ios.js');
 
 var {
@@ -42,7 +42,7 @@ var northwest = React.createClass({
             initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
         </TabBarIOS.Item>
         <TabBarIOS.Item title='Post' onPress={self.onPost} selected={this.state.selection === 'Post'}>
-          <NewPost />
+          <NewPurchase />
         </TabBarIOS.Item>
         <TabBarIOS.Item title='Settings' onPress={self.onSettings} selected={this.state.selection === 'Settings'}>
           <Settings />

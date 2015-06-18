@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var storage = require('./storage');
+var config = require('../config');
 
 var {
   StyleSheet,
@@ -16,19 +17,34 @@ var {
 var Feed = React.createClass({
   getInitialState: function () {
     return {
+      initialPosition: 'unknown',
+      lastPosition: 'unknown',
       loading: true,
       venues: []
     };
   },
 
   componentDidMount: function () {
-    this.fetchData();
+    this.fetchLocation();
+  },
+
+  fetchLocation: function () {
+    this.setState({loading: true});
+
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => {
+        this.setState({initialPosition}, () => this.fetchData());
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   },
 
   fetchData: function () {
-    var url = 'https://api.foursquare.com/v2/venues/search?ll=-33.868,151.206&radius=200&intent=browse&client_id=LXSSV0Q43OEKKMRJIRX3RDGWYMEKSUZNUHJTF3UCBX5AQJUS&client_secret=JAZW3PATQJNWUIN5I4UDD52LDMJKG1HHWLGOI4VY34WHAXNN&v=20150616';
+    console.log(this.state);
 
-    this.setState({loading: true});
+    var url = 'https://api.foursquare.com/v2/venues/search?ll=' + this.state.initialPosition.coords.latitude + ',' + this.state.initialPosition.coords.longitude + '&radius=200&intent=browse&client_id=' + config.foursquareClientID() + '&client_secret=' + config.foursquareClientSecret() + '&v=20150616';
 
     fetch(url)
       .then((response) => response.json())
@@ -65,7 +81,8 @@ var Feed = React.createClass({
         } else {
           alert('Yay it saved');
         }
-      });
+      })
+      .done();
   },
 
   render: function () {
@@ -73,7 +90,7 @@ var Feed = React.createClass({
 
     if (this.state.loading) {
       return (
-        <ActivityIndicatorIOS />
+        <ActivityIndicatorIOS style={styles.activity} />
       );
     } else if (!this.state.purchase) {
       var results = this.state.venues.map(function (v) {
@@ -89,6 +106,9 @@ var Feed = React.createClass({
 
       return (
         <ScrollView>
+          <View style={styles.subheader}>
+            <Text style={styles.subheaderText}>Select a store</Text>
+          </View>
           <View>
             { results }
           </View>
@@ -117,6 +137,20 @@ var Feed = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  activity: {
+    marginTop: 100
+  },
+  subheader: {
+    backgroundColor: '#eee',
+    padding: 10,
+    paddingTop: 20,
+    textAlign: 'center',
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1
+  },
+  subheaderText: {
+    fontWeight: 'bold'
+  },
   result: {
     padding: 10,
     borderBottomWidth: 1,

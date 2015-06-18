@@ -12,5 +12,11 @@ module.exports = {
   },
   unlikePurchaseURL: function (id) {
     return 'http://localhost:3000/v1/purchases/' + id + '/likes';
+  },
+  foursquareClientID: function () {
+    return 'LXSSV0Q43OEKKMRJIRX3RDGWYMEKSUZNUHJTF3UCBX5AQJUS';
+  },
+  foursquareClientSecret: function () {
+    return 'JAZW3PATQJNWUIN5I4UDD52LDMJKG1HHWLGOI4VY34WHAXNN';
   }
 };
