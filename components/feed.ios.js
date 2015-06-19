@@ -4,6 +4,7 @@ var React = require('react-native');
 var timeago = require('timeago');
 var config = require('../config');
 var LikeButton = require('./like-button.js');
+var Loading = require('./loading');
 var ShowPurchase = require('./show-purchase.ios.js');
 
 var {
@@ -11,7 +12,6 @@ var {
   Text,
   Image,
   TouchableHighlight,
-  ActivityIndicatorIOS,
   View,
   ScrollView
 } = React;
@@ -48,7 +48,7 @@ var Feed = React.createClass({
 
   render: function () {
     if (this.state.loading) {
-      return (<ActivityIndicatorIOS style={{marginTop: 100}} />);
+      return <Loading />;
     } else {
       var purchases = this.state.purchases.map((p) => {
         var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;

@@ -3,11 +3,11 @@
 var React = require('react-native');
 var storage = require('./storage');
 var SelectVenue = require('./select-venue');
+var Loading = require('./loading');
 
 var {
   StyleSheet,
   NavigatorIOS,
-  ActivityIndicatorIOS
 } = React;
 
 var Feed = React.createClass({
@@ -39,9 +39,7 @@ var Feed = React.createClass({
     var self = this;
 
     if (this.state.geolocating) {
-      return (
-        <ActivityIndicatorIOS style={styles.activity} />
-      );
+      return <Loading />;
     } else {
       return (
         <NavigatorIOS
