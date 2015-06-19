@@ -29,6 +29,7 @@ Storage.prototype.refreshPurchases = function () {
     .then((responseText) => {
       var json = JSON.parse(responseText);
       this.purchases = json.purchases;
+      this.emit('refreshedPurchases');
     });
 };
 
@@ -100,19 +101,25 @@ Storage.prototype.register = function (user) {
 };
 
 Storage.prototype.createPurchase = function (purchase) {
-  return this.authenticatedRequest('POST', config.createPurchaseURL, { purchase: purchase });
+  return this.authenticatedRequest('POST', config.createPurchaseURL, { purchase: purchase })
+    .then((response) => response.text())
+    .then((responseText) => {
+      var json = JSON.parse(responseText);
+      this.refreshPurchases();
+      return json;
+    });
 };
 
 Storage.prototype.likePurchase = function (purchase) {
   var p = this.findPurchase(purchase.id);
   p.likes.push(this.user.username);
-  this.authenticatedRequest('POST', config.likePurchaseURL(purchase.id)).then(() => this.emit('liked'));
+  return this.authenticatedRequest('POST', config.likePurchaseURL(purchase.id)).then(() => this.emit('liked'));
 };
 
 Storage.prototype.unlikePurchase = function (purchase) {
   var p = this.findPurchase(purchase.id);
   p.likes = p.likes.filter((n) => n !== this.user.username);
-  this.authenticatedRequest('DELETE', config.unlikePurchaseURL(purchase.id)).then(() => this.emit('unliked'));
+  return this.authenticatedRequest('DELETE', config.unlikePurchaseURL(purchase.id)).then(() => this.emit('unliked'));
 };
 
 Storage.prototype.authenticatedRequest = function (method, url, data) {

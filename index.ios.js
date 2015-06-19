@@ -7,14 +7,20 @@ var {
   AppRegistry,
   StyleSheet,
   NavigatorIOS,
-  TabBarIOS
+  TabBarIOS,
+  Image,
+  ActivityIndicatorIOS
 } = React;
 
 var northwest = React.createClass({
   getInitialState: function () {
     return {
-      selection: 'Feed'
+      selection: 'Welcome'
     };
+  },
+
+  onWelcome: function () {
+    this.setState({selection: 'Welcome'});
   },
 
   onFeed: function () {
@@ -32,17 +38,20 @@ var northwest = React.createClass({
   render: function () {
     return (
        <TabBarIOS>
-        <TabBarIOS.Item title='Feed' onPress={this.onFeed} selected={this.state.selection === 'Feed'}>
+        <TabBarIOS.Item title='Willkomen' onPress={this.onWelcome} selected={this.state.selection === 'Welcome'}>
+          <Image style={styles.image} source={{ uri: 'http://i.imgur.com/Kitv0Dc.png' }} />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item title='Neuheiten' onPress={this.onFeed} selected={this.state.selection === 'Feed'}>
           <NavigatorIOS
             ref='nav'
             barTintColor='#ffde00'
             style={styles.wrapper}
             initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
         </TabBarIOS.Item>
-        <TabBarIOS.Item title='New Purchase' onPress={this.onPost} selected={this.state.selection === 'Post'}>
+        <TabBarIOS.Item title='Gekauft' onPress={this.onPost} selected={this.state.selection === 'Post'}>
           <NewPurchase />
         </TabBarIOS.Item>
-        <TabBarIOS.Item title='Settings' onPress={this.onSettings} selected={this.state.selection === 'Settings'}>
+        <TabBarIOS.Item title='Konto' onPress={this.onSettings} selected={this.state.selection === 'Settings'}>
           <Settings />
         </TabBarIOS.Item>
       </TabBarIOS>
@@ -52,6 +61,9 @@ var northwest = React.createClass({
 
 var styles = StyleSheet.create({
   wrapper: {
+    flex: 1
+  },
+  image: {
     flex: 1
   }
 });

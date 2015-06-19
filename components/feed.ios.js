@@ -27,6 +27,7 @@ var Feed = React.createClass({
   componentDidMount: function () {
     this.fetchData();
 
+    storage.on('refreshedPurchases', this.getStateFromStores.bind(this));
     storage.on('liked', this.getStateFromStores.bind(this));
     storage.on('unliked', this.getStateFromStores.bind(this));
   },
@@ -36,7 +37,7 @@ var Feed = React.createClass({
   },
 
   fetchData: function () {
-    storage.refreshPurchases().then(this.getStateFromStores.bind(this)).done();
+    storage.refreshPurchases();
   },
 
   onShowProduct: function (p) {
@@ -53,11 +54,11 @@ var Feed = React.createClass({
         var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
 
         return (
-          <TouchableHighlight underlayColor='#ccc' onPress={this.onShowProduct.bind(this, p)}>
+          <TouchableHighlight key={p.id} underlayColor='#ccc' onPress={this.onShowProduct.bind(this, p)}>
             <View style={styles.purchase}>
               <Image
                 style={styles.avatar}
-                source={{uri: p.user.avatar}}
+                source={{uri: p.user.avatar + '?' }}
               />
               <View style={styles.details}>
                 <Text style={styles.description}>

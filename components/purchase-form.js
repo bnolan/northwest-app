@@ -37,24 +37,19 @@ module.exports = React.createClass({
   },
 
   onSave: function () {
-    this.refs.cam.capture(function(err, data) {
-      console.log(err, data);
-    });
+    // this.refs.cam.capture(function(err, data) {
+    //   console.log(err, data);
+    // });
 
-    return;
+    // return;
 
-    storage.createPurchase(this.state.purchase)
-      .then((response) => response.text())
-      .then((responseText) => {
-        var json = JSON.parse(responseText);
-
-        if (json.error) {
-          alert('Could not save: \n' + json.error);
-        } else {
-          alert('Yay it saved');
-        }
-      })
-      .done();
+    storage.createPurchase(this.state.purchase).then((json) => {
+      if (json.error) {
+        alert('Could not save: \n' + json.error);
+      } else {
+        alert('Yay it saved');
+      }
+    }).done();
   },
 
   render: function () {
@@ -65,7 +60,6 @@ module.exports = React.createClass({
     //   style={styles.camera}
     //   onBarCodeRead={this._onBarCodeRead}
     //   type={this.state.cameraType} />
-
 
     return (
       <ScrollView style={styles.scroll}>

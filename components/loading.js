@@ -11,7 +11,7 @@ module.exports = React.createClass({
   render: function () {
     return (
       <View style={styles.wrapper}>
-        <Image resizeMode='stretch' style={styles.image} source={{ uri: 'http://i.imgur.com/IHBqC0R.png' }}>
+        <Image style={styles.image} source={{ uri: 'http://i.imgur.com/IHBqC0R.png' }}>
           <ActivityIndicatorIOS style={styles.activity} />
         </Image>
       </View>
