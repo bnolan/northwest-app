@@ -3,7 +3,7 @@
 var React = require('react-native');
 var timeago = require('timeago');
 var config = require('../config');
-var Storage = require('./storage');
+var storage = require('./storage');
 var LikeButton = require('./like-button.js');
 
 var {
@@ -12,28 +12,49 @@ var {
   Image,
   ActivityIndicatorIOS,
   View,
-  ScrollView,
-  TouchableOpacity
+  ScrollView
 } = React;
 
 module.exports = React.createClass({
   getInitialState: function () {
     return {
-      loading: true
+      loading: true,
+      purchase: {},
+      likeDetails: []
     };
   },
 
   componentDidMount: function () {
-    fetch(config.purchaseURL(this.props.purchase.id))
-      .then((response) => response.text())
-      .then((responseText) => {
-        var json = JSON.parse(responseText);
+    this.fetchData();
+    storage.on('liked', this.fetchData.bind(this));
+    storage.on('unliked', this.fetchData.bind(this));
+  },
 
-        this.setState({
-          purchase: json,
-          loading: false
-        });
-      }).done();
+  fetchData: function () {
+    this.setState({
+      purchase: storage.findPurchase(this.props.purchase.id),
+      loading: false
+    });
+
+    storage.fetchPurchase(this.props.purchase).then((purchase) => {
+      console.log('purchase.likes:');
+      console.log(purchase.likes);
+
+      this.setState({
+        likeDetails: purchase.likes
+      });
+    }).done();
+
+    // fetch(config.purchaseURL(this.props.purchase.id))
+    //   .then((response) => response.text())
+    //   .then((responseText) => {
+    //     var json = JSON.parse(responseText);
+
+    //     this.setState({
+    //       purchase: json,
+    //       loading: false
+    //     });
+    //   }).done();
   },
 
   render: function () {
@@ -43,7 +64,7 @@ module.exports = React.createClass({
       var p = this.state.purchase;
       var image = p.photo && <Image style={styles.productImage} source={{uri: 'http://localhost:3000/fixtures/' + p.photo }} />;
 
-      var likes = p.likes.map(function (like) {
+      var likes = this.state.likeDetails.map(function (like) {
         return (
           <View style={styles.like}>
               <Image

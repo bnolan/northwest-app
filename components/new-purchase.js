@@ -44,6 +44,7 @@ var Feed = React.createClass({
       return (
         <NavigatorIOS
           ref='nav'
+          barTintColor='#ffde00'
           style={styles.wrapper}
           onPress={self.onFeed}
           initialRoute={{ component: SelectVenue, title: 'Where did you shop?', passProps: { initialPosition: this.state.initialPosition }}} />

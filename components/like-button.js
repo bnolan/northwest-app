@@ -22,10 +22,8 @@ module.exports = React.createClass({
     var p = this.props.purchase;
 
     if (this.userLikesPurchase(p)) {
-      // p.likes = p.likes.filter((n) => n !== username);
       Storage.unlikePurchase(p);
     } else {
-      // p.likes.push(username);
       Storage.likePurchase(p);
     }
   },

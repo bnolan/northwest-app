@@ -4,6 +4,7 @@ var React = require('react-native');
 var storage = require('./storage');
 var config = require('../config');
 var PurchaseForm = require('./purchase-form');
+var Loading = require('./loading');
 
 var {
   StyleSheet,
@@ -37,7 +38,6 @@ module.exports = React.createClass({
     fetch(url)
       .then((response) => response.json())
       .then((responseData) => {
-        console.log(responseData.response.venues);
         this.setState({
           venues: responseData.response.venues,
           loading: false
@@ -64,9 +64,7 @@ module.exports = React.createClass({
     var self = this;
 
     if (this.state.loading) {
-      return (
-        <ActivityIndicatorIOS style={styles.activity} />
-      );
+      return <Loading />;
     }
 
     var results = this.state.venues.map(function (v) {

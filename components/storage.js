@@ -2,6 +2,8 @@
 
 var React = require('react-native');
 var config = require('../config');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 
 const ACCESSTOKENKEY = 'ACCESSTOKEN';
 const USERKEY = 'USERNAME';
@@ -13,9 +15,31 @@ var {
 function Storage () {
   this.accessToken = null;
   this.user = null;
+  this.purchases = [];
 
   AsyncStorage.getItem(ACCESSTOKENKEY).then((key) => this.accessToken = key);
   AsyncStorage.getItem(USERKEY).then((value) => this.user = JSON.parse(value));
+};
+
+util.inherits(Storage, EventEmitter);
+
+Storage.prototype.refreshPurchases = function () {
+  return fetch(config.feedURL)
+    .then((response) => response.text())
+    .then((responseText) => {
+      var json = JSON.parse(responseText);
+      this.purchases = json.purchases;
+    });
+};
+
+Storage.prototype.fetchPurchase = function (purchase) {
+  return fetch(config.purchaseURL(purchase.id))
+    .then((response) => response.text())
+    .then((responseText) => JSON.parse(responseText));
+};
+
+Storage.prototype.findPurchase = function (id) {
+  return this.purchases.find((p) => p.id === id);
 };
 
 Storage.prototype.setAccessToken = function (key) {
@@ -80,11 +104,15 @@ Storage.prototype.createPurchase = function (purchase) {
 };
 
 Storage.prototype.likePurchase = function (purchase) {
-  return this.authenticatedRequest('POST', config.likePurchaseURL(purchase.id));
+  var p = this.findPurchase(purchase.id);
+  p.likes.push(this.user.username);
+  this.authenticatedRequest('POST', config.likePurchaseURL(purchase.id)).then(() => this.emit('liked'));
 };
 
 Storage.prototype.unlikePurchase = function (purchase) {
-  return this.authenticatedRequest('DELETE', config.unlikePurchaseURL(purchase.id));
+  var p = this.findPurchase(purchase.id);
+  p.likes = p.likes.filter((n) => n !== this.user.username);
+  this.authenticatedRequest('DELETE', config.unlikePurchaseURL(purchase.id)).then(() => this.emit('unliked'));
 };
 
 Storage.prototype.authenticatedRequest = function (method, url, data) {

@@ -60,6 +60,13 @@ module.exports = React.createClass({
   render: function () {
     var p = this.state.purchase;
 
+    // <Camera
+    //   ref='cam'
+    //   style={styles.camera}
+    //   onBarCodeRead={this._onBarCodeRead}
+    //   type={this.state.cameraType} />
+
+
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
@@ -72,12 +79,6 @@ module.exports = React.createClass({
           </Text>
 
           <TextInput placeholder='Product name' onChangeText={this.onNameChange} style={styles.purchaseName} />
-
-          <Camera
-            ref='cam'
-            style={styles.camera}
-            onBarCodeRead={this._onBarCodeRead}
-            type={this.state.cameraType} />
 
           <TouchableHighlight underlayColor='#ccc' onPress={this.onSave}>
             <View style={styles.saveButton}>

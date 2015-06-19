@@ -6,6 +6,7 @@ var config = require('../config');
 var LikeButton = require('./like-button.js');
 var Loading = require('./loading');
 var ShowPurchase = require('./show-purchase.ios.js');
+var storage = require('./storage');
 
 var {
   StyleSheet,
@@ -25,19 +26,17 @@ var Feed = React.createClass({
 
   componentDidMount: function () {
     this.fetchData();
+
+    storage.on('liked', this.getStateFromStores.bind(this));
+    storage.on('unliked', this.getStateFromStores.bind(this));
+  },
+
+  getStateFromStores: function () {
+    this.setState({ purchases: storage.purchases, loading: false });
   },
 
   fetchData: function () {
-    fetch(config.feedURL)
-      .then((response) => response.text())
-      .then((responseText) => {
-        var json = JSON.parse(responseText);
-
-        this.setState({
-          purchases: json.purchases,
-          loading: false
-        });
-      }).done();
+    storage.refreshPurchases().then(this.getStateFromStores.bind(this)).done();
   },
 
   onShowProduct: function (p) {

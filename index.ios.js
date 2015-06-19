@@ -35,6 +35,7 @@ var northwest = React.createClass({
         <TabBarIOS.Item title='Feed' onPress={this.onFeed} selected={this.state.selection === 'Feed'}>
           <NavigatorIOS
             ref='nav'
+            barTintColor='#ffde00'
             style={styles.wrapper}
             initialRoute={{ component: Feed, title: 'Trending Purchases' }} />
         </TabBarIOS.Item>
